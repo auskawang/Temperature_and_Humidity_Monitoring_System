@@ -1,0 +1,38 @@
+# Ignore build output directories
+/Debug/
+/Release/
+/Drivers/
+# Ignore CubeMX configuration backup files
+*.ioc.bak
+
+# Ignore generated binaries and executables
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+
+# Ignore intermediate and object files
+*.o
+*.d
+*.su
+*.obj
+*.a
+*.lib
+
+# Ignore CubeMX database and IDE metadata
+*.db
+*.launch
+*.log
+.metadata/
+
+# Ignore temporary or system-specific files
+*.swp
+*.tmp
+*.bak
+*.DS_Store
+Thumbs.db
+
+# Ignore user-specific files
+*.user
+*.settings/
