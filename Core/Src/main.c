@@ -22,7 +22,7 @@
 #include "i2clcd.h"
 #include <stdio.h>
 #include <string.h>
-
+#define DHT22_READ_DELAY_MS 2000 //required 2 second delay between readings
 /**
  * @brief main
  *
@@ -31,14 +31,19 @@
  * @param None
  * @return None
  */
-int main(void)
+
+void system_init()
 {
 	bsp_init();	//initializes the hardware of STM32 NUCLEOC031C6
 	lcd_init(); //initializes the lcd
+}
+int main(void)
+{
+	system_init();
     while (1)
     {
-		printData();	//prints temperature and humidity data through serial
-		HAL_Delay(2000);	//2 seconds needed between readings to ensure accurate readings
+		printTemperatureAndHumidityData();	//prints temperature and humidity data through serial
+		HAL_Delay(DHT22_READ_DELAY_MS);	//wait for 2 seconds
     }
 }
 

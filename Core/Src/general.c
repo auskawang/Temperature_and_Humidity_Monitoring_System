@@ -67,9 +67,9 @@ void setPinInput(GPIO_TypeDef* GPIOx, uint16_t pin)
  * @param GPIO_TypeDef* GPIOx, uint16_t pin
  * @return None
  */
-uint16_t combineBytes(volatile uint8_t left, volatile uint8_t right)
+uint16_t combineBytes(uint8_t left, uint8_t right)
 {
-	return (uint16_t)left * 256 + (uint16_t)right;
+	return (uint16_t)left << 8 | (uint16_t)right;
 }
 
 /**

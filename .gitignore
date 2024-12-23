@@ -1,7 +1,13 @@
 # Ignore build output directories
 /Debug/
 /Release/
+
 /Drivers/
+*.ld
+*.project
+*.cproject
+*.mxproject
+
 # Ignore CubeMX configuration backup files
 *.ioc.bak
 

@@ -13,6 +13,9 @@
 #include "general.h"
 #include "i2clcd.h"
 
+#define LCD_DISPLAY_LENGTH 16
+#define BITS_IN_BYTE 8
+#define HUMIDITY_MEASUREMENT_OFFSET -7.0
 extern UART_HandleTypeDef huart2;
 extern RTC_HandleTypeDef hrtc;
 extern RTC_TimeTypeDef sTime;
@@ -39,15 +42,16 @@ uint8_t h1, 	//first byte of humidity data
  * @param None
  * @return None
  */
-void DHT22_start()
+static void DHT22_start()
 {
 	setPinOutput(DHT22_Port, DHT22_Pin);
-	HAL_GPIO_WritePin(DHT22_Port, DHT22_Pin, 0);	//MCU pulls the data line low for at least 1 - 10 ms
 
-	microDelay(5000);	//5 ms delay
+	//MCU pulls the data line low for at least 1 - 10 ms
+	HAL_GPIO_WritePin(DHT22_Port, DHT22_Pin, 0);
+	microDelay(5000); //5 ms delay
 
-	HAL_GPIO_WritePin(DHT22_Port, DHT22_Pin, 0);	//MCU pulls the data line high and waits 20 - 40 us for DHT22 response
-
+	//MCU pulls the data line high and waits 20 - 40 us for DHT22 response
+	HAL_GPIO_WritePin(DHT22_Port, DHT22_Pin, 1);
 	microDelay(30);	//30 us delay
 
 	setPinInput(DHT22_Port, DHT22_Pin);	//switch to input mode to detect response from DHT22 sensor
@@ -61,9 +65,9 @@ void DHT22_start()
  * @param None
  * @return int response
  */
-int DHT22_response()
+static DHT22_Status DHT22_response()
 {
-	int response = 0;	//flag that shows whether responsiveness of DHT22 sensor, 0 if failed, 1 if successful
+	DHT22_Status response = DHT22_RESPONSE_FAIL;	//flag that shows whether responsiveness of DHT22 sensor, 0 if failed, 1 if successful
 
 	//sensor will pull the data line low for 80 us
 	microDelay(40);	//40 us delay
@@ -76,7 +80,7 @@ int DHT22_response()
 
 		//if successful, data line should still be high since at this moment program is in the middle of sensor pulling data line high
 		if (HAL_GPIO_ReadPin(DHT22_Port, DHT22_Pin))
-			response = 1;	//assign response with 1 since response of sensor is successful
+			response = DHT22_RESPONSE_SUCCESSFUL;	//assign response with 1 since response of sensor is successful
 	}
 
 	//wait until data line pulls low, where acquisition of data will start
@@ -94,12 +98,12 @@ int DHT22_response()
  * @param None
  * @return uint8_t byte
  */
-uint8_t DHT22_read()
+static uint8_t DHT22_read()
 {
 	uint8_t byte = 0;	//create byte 00000000
 
 	//process bit by bit, for a total of 8 bits, or 1 byte
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < BITS_IN_BYTE; i++)
 	{
 		//sensor will pull low, wait for high data line for data
 		while (!HAL_GPIO_ReadPin(DHT22_Port, DHT22_Pin))
@@ -110,7 +114,7 @@ uint8_t DHT22_read()
 
 		//if data line is still high, this means that bit value must be 1
 		if (HAL_GPIO_ReadPin(DHT22_Port, DHT22_Pin))
-			byte |= 1 << (7 - i);	//place bit value 1 in corresponding position
+			byte |= 1 << (BITS_IN_BYTE - 1 - i);	//place bit value 1 in corresponding position
 
 		//if data line is still high, wait until data line is low
 		while (HAL_GPIO_ReadPin(DHT22_Port, DHT22_Pin))
@@ -141,7 +145,7 @@ uint8_t DHT22_read()
  * @param uint8_t t1, uint8_t t2
  * @return float
  */
-float getTemperatureF(uint8_t t1, uint8_t t2)
+static float getTemperatureF(uint8_t t1, uint8_t t2)
 {
 	return 9.0 / 5.0 * (combineBytes(t1, t2) / 10.0) + 32;	//C = 9/5 * F + 32
 }
@@ -154,7 +158,7 @@ float getTemperatureF(uint8_t t1, uint8_t t2)
  * @param uint8_t h1, uint8_t h2
  * @return float
  */
-float getHumidity(uint8_t h1, uint8_t h2)
+static float getHumidity(uint8_t h1, uint8_t h2)
 {
 	return combineBytes(h1, h2) / 10.0;	//humidity value should be divided by 10 to get real value
 }
@@ -167,12 +171,12 @@ float getHumidity(uint8_t h1, uint8_t h2)
  * @param uint8_t* h1, uint8_t* h2, uint8_t* t1, uint8_t* t2, uint8_t* check
  * @return none
  */
-void DHT22_getData()
+static void DHT22_getData()
 {
 	DHT22_start();	//begin process of reading from sensor
 
 	//if sensor is responsive
-	if (DHT22_response())
+	if (DHT22_response() == DHT22_RESPONSE_SUCCESSFUL)
 	{
 	  h1 = DHT22_read();	//first byte from sensor is first byte of humidity data
 	  h2 = DHT22_read();	//second byte from sensor is second byte of humidity data
@@ -194,12 +198,12 @@ void DHT22_getData()
  * @param uint8_t* h1, uint8_t* h2, uint8_t* t1, uint8_t* t2
  * @return none
  */
-__attribute__((optimize("O0")))
-void printData()
+
+void printTemperatureAndHumidityData()
 {
 	DHT22_getData();
 	volatile float temperature = getTemperatureF(t1, t2);
-	volatile float humidity = getHumidity(h1, h2) - 7.0;	//software calibration
+	volatile float humidity = getHumidity(h1, h2) + HUMIDITY_MEASUREMENT_OFFSET;	//software calibration
 //	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 //	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
@@ -233,7 +237,7 @@ void printData()
 //		lowHumidityMin = sTime.Minutes;
 //	}
 
-	char buffer[16];
+	char buffer[LCD_DISPLAY_LENGTH];
 //	snprintf(buffer, sizeof(buffer), "%.2f,%.2f,%.2f,%02d,%02d,%.2f,%02d,%02d,%.2f,%02d,%02d,%.2f,%02d,%02d\n", temperature, humidity, highTemp, highTempHour, highTempMin, lowTemp, lowTempHour, lowTempMin, highHumidity, highHumidityHour, highHumidityMin, lowHumidity, lowHumidityHour, lowHumidityMin);
 	clear_display();
 	snprintf(buffer, sizeof(buffer), "Temp: %.2f", temperature);
