@@ -236,10 +236,12 @@ void printTemperatureAndHumidityData()
 //		lowHumidityMin = sTime.Minutes;
 //	}
 
-	char buffer[LCD_DISPLAY_LENGTH];
+	char buffer[LCD_DISPLAY_LENGTH] = {0};
 //	snprintf(buffer, sizeof(buffer), "%.2f,%.2f,%.2f,%02d,%02d,%.2f,%02d,%02d,%.2f,%02d,%02d,%.2f,%02d,%02d\n", temperature, humidity, highTemp, highTempHour, highTempMin, lowTemp, lowTempHour, lowTempMin, highHumidity, highHumidityHour, highHumidityMin, lowHumidity, lowHumidityHour, lowHumidityMin);
 	clear_display();
 	snprintf(buffer, sizeof(buffer), "Temp: %.2f", temperature);
+	buffer[strlen(buffer)] = 0xDF;
+	buffer[strlen(buffer)] = temp_units ? 'F' : 'C';
 	printString(buffer);
 	carriage_return();
 	snprintf(buffer, sizeof(buffer), "Humidity: %.2f", humidity);
