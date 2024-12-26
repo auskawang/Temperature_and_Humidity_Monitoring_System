@@ -7,6 +7,7 @@ UART_HandleTypeDef huart2;
 //RTC_HandleTypeDef hrtc;
 I2C_HandleTypeDef hi2c1;
 
+
 /**
  * @brief microsecond delay
  *
@@ -80,7 +81,7 @@ uint16_t combineBytes(uint8_t left, uint8_t right)
  * @param none
  * @return None
  */
-void MX_TIM3_Init(void)
+static void MX_TIM3_Init(void)
 {
 	TIM_ClockConfigTypeDef sClockSourceConfig = {0};
 	TIM_MasterConfigTypeDef sMasterConfig = {0};
@@ -122,7 +123,7 @@ void MX_TIM3_Init(void)
  * @param None
  * @return None
  */
-void SystemClock_Config(void)
+static void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
@@ -160,7 +161,7 @@ void SystemClock_Config(void)
  * @param None
  * @return None
  */
-void MX_USART2_UART_Init(void)
+static void MX_USART2_UART_Init(void)
 {
 	huart2.Instance = USART2;
 	huart2.Init.BaudRate = 9600;
@@ -189,7 +190,7 @@ void MX_USART2_UART_Init(void)
  * @param None
  * @return None
  */
-void MX_GPIO_Init(void)
+static void MX_GPIO_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 
@@ -204,9 +205,16 @@ void MX_GPIO_Init(void)
 	HAL_GPIO_Init(DHT22_Port, &GPIO_InitStruct);
 
 
+	/*Configure GPIO pin : BUTTON_Pin */
+	GPIO_InitStruct.Pin = EXTI_Button_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+	HAL_GPIO_Init(EXTI_Button_Port, &GPIO_InitStruct);
+
 	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 0, 0);
 	HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
 }
+
 //RTC_TimeTypeDef sTime = {0};
 //RTC_DateTypeDef sDate = {0};
 
@@ -280,7 +288,7 @@ void MX_GPIO_Init(void)
   * @param None
   * @retval None
   */
-void MX_I2C1_Init(void)
+static void MX_I2C1_Init(void)
 {
 
   /* USER CODE BEGIN I2C1_Init 0 */

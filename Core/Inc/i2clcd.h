@@ -10,8 +10,8 @@
 
 /* Function prototypes ------------------------------------------------------------------*/
 void lcd_init();
-void send_cmd(char);
-void send_data(char);
+static void send_cmd(char);
+static void send_data(char);
 void printString(char[]);
 void clear_display();
 void carriage_return();

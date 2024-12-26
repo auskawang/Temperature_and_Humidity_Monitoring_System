@@ -31,8 +31,7 @@
  * @param None
  * @return None
  */
-
-void system_init()
+static void system_init()
 {
 	bsp_init();	//initializes the hardware of STM32 NUCLEOC031C6
 	lcd_init(); //initializes the lcd
@@ -42,11 +41,10 @@ int main(void)
 	system_init();
     while (1)
     {
-		printTemperatureAndHumidityData();	//prints temperature and humidity data through serial
+    	printTemperatureAndHumidityData();	//prints temperature and humidity data through serial
 		HAL_Delay(DHT22_READ_DELAY_MS);	//wait for 2 seconds
     }
 }
-
 
 /**
  * @brief Error Handler

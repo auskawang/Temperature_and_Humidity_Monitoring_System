@@ -16,7 +16,7 @@
 #define INSTRUCTION_REGISTER_ENABLE_OFF 0x08
 #define DATA_REGISTER_ENABLE_ON 0x0D
 #define DATA_REGISTER_ENABLE_OFF 0x09
-#define DATA_SEND_BIT_SIZE 4
+#define BIT_MODE_4 4
 extern I2C_HandleTypeDef hi2c1;
 extern UART_HandleTypeDef huart2;
 
@@ -53,9 +53,9 @@ void carriage_return()
 	send_cmd(0xC0);
 	HAL_Delay(1);
 }
-void send_cmd (char cmd)
+static void send_cmd (char cmd)
 {
-	uint8_t t[DATA_SEND_BIT_SIZE];
+	uint8_t t[BIT_MODE_4];
 	char u, l;
 
 	u = cmd & UPPER_BITS_MASK;
@@ -68,9 +68,9 @@ void send_cmd (char cmd)
 	if (HAL_I2C_Master_Transmit(&hi2c1, PCF8574_ADDR, t, sizeof(t), HAL_MAX_DELAY) != HAL_OK)
 		Error_Handler();
 }
-void send_data (char data)
+static void send_data (char data)
 {
-	uint8_t t[DATA_SEND_BIT_SIZE];
+	uint8_t t[BIT_MODE_4];
 	char u, l;
 
 	u = data & UPPER_BITS_MASK;

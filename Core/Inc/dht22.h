@@ -22,7 +22,7 @@ static DHT22_Status DHT22_response();
 static uint8_t DHT22_read();
 static void DHT22_getData();
 void printTemperatureAndHumidityData();
-float getTemperatureC(uint8_t t1, uint8_t t2);
+static float getTemperatureC(uint8_t t1, uint8_t t2);
 static float getTemperatureF(uint8_t t1, uint8_t t2);
 static float getHumidity(uint8_t h1, uint8_t h2);
 

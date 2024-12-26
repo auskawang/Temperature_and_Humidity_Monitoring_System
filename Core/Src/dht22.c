@@ -17,9 +17,7 @@
 #define BITS_IN_BYTE 8
 #define HUMIDITY_MEASUREMENT_OFFSET -7.0
 extern UART_HandleTypeDef huart2;
-extern RTC_HandleTypeDef hrtc;
-extern RTC_TimeTypeDef sTime;
-extern RTC_DateTypeDef sDate;
+
 
 //variables for extreme temp measurements
 //float highTemp = 0.0f;
@@ -34,6 +32,7 @@ uint8_t h1, 	//first byte of humidity data
 		t2, 	//second byte of temperature data
 		check;	//checksum byte to ensure data integrity
 
+uint8_t temp_units = 0;
 /**
  * @brief Initializes the DHT22 sensor.
  *
@@ -132,10 +131,10 @@ static uint8_t DHT22_read()
  * @param uint8_t t1, uint8_t t2
  * @return float
  */
-//float getTemperatureC(uint8_t t1, uint8_t t2)
-//{
-//	return combineBytes(t1, t2) / 10.0;	//temperature value should be divided by 10 to get real value
-//}
+float getTemperatureC(uint8_t t1, uint8_t t2)
+{
+	return combineBytes(t1, t2) / 10.0;	//temperature value should be divided by 10 to get real value
+}
 
 /**
  * @brief Gets temperature in Farenheit
@@ -202,7 +201,7 @@ static void DHT22_getData()
 void printTemperatureAndHumidityData()
 {
 	DHT22_getData();
-	volatile float temperature = getTemperatureF(t1, t2);
+	volatile float temperature = (temp_units) ? getTemperatureF(t1, t2) : getTemperatureC(t1, t2);
 	volatile float humidity = getHumidity(h1, h2) + HUMIDITY_MEASUREMENT_OFFSET;	//software calibration
 //	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 //	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
@@ -250,5 +249,10 @@ void printTemperatureAndHumidityData()
 //	HAL_UART_Transmit(&huart2, (const uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);	//send data through serial
 
 
+}
+
+void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin) {
+	temp_units = !temp_units;
+	__HAL_GPIO_EXTI_CLEAR_RISING_IT(GPIO_Pin);
 }
 
