@@ -19,6 +19,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "general.h"
+#include "dht22.h"
 #include "stm32c0xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -139,16 +141,32 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32c0xx.s).                    */
 /******************************************************************************/
+/**
+  * @brief This function handles EXTI line 0 to 1 interrupts.
+  */
+void EXTI0_1_IRQHandler(void)
+{
+	EXTI0_1_IRQHandler_Extended();
+}
 
+/**
+  * @brief This function handles EXTI line 2 to 3 interrupts.
+  */
+void EXTI2_3_IRQHandler(void)
+{
+	EXTI2_3_IRQHandler_Extended();
+}
 /**
   * @brief This function handles EXTI line 4 to 15 interrupts.
   */
 void EXTI4_15_IRQHandler(void)
 {
+	//FIXME: update some variable to switch between C and F
   /* USER CODE BEGIN EXTI4_15_IRQn 0 */
 
   /* USER CODE END EXTI4_15_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_7);
+	EXTI4_15_IRQHandler_Extended();
+
   /* USER CODE BEGIN EXTI4_15_IRQn 1 */
 
   /* USER CODE END EXTI4_15_IRQn 1 */

@@ -65,6 +65,8 @@ void Error_Handler(void);
 #define VCP_USART2_RX_GPIO_Port GPIOA
 #define Led_Pin GPIO_PIN_5
 #define Led_GPIO_Port GPIOA
+#define on_off_pin_Pin GPIO_PIN_0
+#define on_off_pin_GPIO_Port GPIOB
 #define BUTTON_Pin GPIO_PIN_12
 #define BUTTON_GPIO_Port GPIOA
 #define BUTTON_EXTI_IRQn EXTI4_15_IRQn

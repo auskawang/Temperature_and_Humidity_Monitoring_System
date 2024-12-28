@@ -18,7 +18,7 @@
 #define HUMIDITY_MEASUREMENT_OFFSET -7.0
 extern UART_HandleTypeDef huart2;
 
-
+uint8_t temp_units = 0;
 //variables for extreme temp measurements
 //float highTemp = 0.0f;
 //float lowTemp = 100.0f;
@@ -32,7 +32,7 @@ uint8_t h1, 	//first byte of humidity data
 		t2, 	//second byte of temperature data
 		check;	//checksum byte to ensure data integrity
 
-uint8_t temp_units = 0;
+
 /**
  * @brief Initializes the DHT22 sensor.
  *
@@ -252,9 +252,38 @@ void printTemperatureAndHumidityData()
 
 
 }
+uint8_t mode = 0; //off = 0, on = 1
+void display_off()
+{
+	send_cmd(0x08);
+	microDelay(40);
+}
 
-void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin) {
-	temp_units = !temp_units;
-	__HAL_GPIO_EXTI_CLEAR_RISING_IT(GPIO_Pin);
+void display_on()
+{
+	send_cmd(0x0C);
+	microDelay(40);
+}
+
+
+void EXTI0_1_IRQHandler_Extended()
+{
+	mode = !mode;
+	if (!mode)
+		display_off();
+	else
+		display_on();
+	__HAL_GPIO_EXTI_CLEAR_RISING_IT(ON_OFF_Button_Pin);
+
+}
+void EXTI4_15_IRQHandler_Extended()
+{
+	if (mode)
+	{
+		temp_units = !temp_units;
+		printTemperatureAndHumidityData();	//prints temperature and humidity data through serial
+	}
+
+	__HAL_GPIO_EXTI_CLEAR_RISING_IT(EXTI_Button_Pin);
 }
 

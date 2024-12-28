@@ -197,6 +197,8 @@ static void MX_GPIO_Init(void)
 	__HAL_RCC_GPIOC_CLK_ENABLE();
 	__HAL_RCC_GPIOF_CLK_ENABLE();
 	__HAL_RCC_GPIOA_CLK_ENABLE();
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+
 
 	GPIO_InitStruct.Pin = DHT22_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -211,7 +213,28 @@ static void MX_GPIO_Init(void)
 	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 	HAL_GPIO_Init(EXTI_Button_Port, &GPIO_InitStruct);
 
-	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 0, 0);
+	/*Configure GPIO pin : LIGHT_Button */
+	GPIO_InitStruct.Pin = LIGHT_Button_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+	HAL_GPIO_Init(LIGHT_Button_Port, &GPIO_InitStruct);
+
+	/*Configure GPIO pin : ON/OFF Button */
+	GPIO_InitStruct.Pin = ON_OFF_Button_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+	HAL_GPIO_Init(ON_OFF_Button_Port, &GPIO_InitStruct);
+
+	//ON_OFF_Button priority
+	HAL_NVIC_SetPriority(EXTI0_1_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
+
+	//LIGHT_Button priority
+	HAL_NVIC_SetPriority(EXTI2_3_IRQn, 1, 0);
+	HAL_NVIC_EnableIRQ(EXTI2_3_IRQn);
+
+	//BUTTON_Pin priority
+	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 2, 0);
 	HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
 }
 
