@@ -15,5 +15,8 @@ void send_data(char);
 void printString(char[]);
 void clear_display();
 void carriage_return();
+void display_off();
+void display_on();
+void EXTI2_3_IRQHandler_Extended();
 
 #endif /* INC_I2CLCD_H_ */

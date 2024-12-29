@@ -17,14 +17,10 @@
 #define BITS_IN_BYTE 8
 #define HUMIDITY_MEASUREMENT_OFFSET -7.0
 extern UART_HandleTypeDef huart2;
+extern TIM_HandleTypeDef htim14;
 
-uint8_t temp_units = 0;
-//variables for extreme temp measurements
-//float highTemp = 0.0f;
-//float lowTemp = 100.0f;
-//float highHumidity = 0.0f;
-//float lowHumidity = 100.0f;
-//uint8_t highTempHour, highTempMin, lowTempHour, lowTempMin, highHumidityHour, highHumidityMin, lowHumidityHour, lowHumidityMin;
+TEMP_UNITS temp_units = FAHRENHEIT;
+DISPLAY_MODE display_mode = ON;
 
 uint8_t h1, 	//first byte of humidity data
 		h2, 	//second byte of humidity data
@@ -131,7 +127,7 @@ static uint8_t DHT22_read()
  * @param uint8_t t1, uint8_t t2
  * @return float
  */
-float getTemperatureC(uint8_t t1, uint8_t t2)
+static float getTemperatureC(uint8_t t1, uint8_t t2)
 {
 	return combineBytes(t1, t2) / 10.0;	//temperature value should be divided by 10 to get real value
 }
@@ -201,75 +197,32 @@ static void DHT22_getData()
 void printTemperatureAndHumidityData()
 {
 	DHT22_getData();
-	volatile float temperature = (temp_units) ? getTemperatureF(t1, t2) : getTemperatureC(t1, t2);
+	volatile float temperature = (temp_units == FAHRENHEIT) ? getTemperatureF(t1, t2) : getTemperatureC(t1, t2);
 	volatile float humidity = getHumidity(h1, h2) + HUMIDITY_MEASUREMENT_OFFSET;	//software calibration
-//	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-//	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-
-
-
-//	if (temperature > highTemp)
-//	{
-//		highTemp = temperature;
-//		highTempHour = sTime.Hours;
-//		highTempMin = sTime.Minutes;
-//	}
-//
-//	if (temperature < lowTemp)
-//	{
-//		lowTemp = temperature;
-//		lowTempHour = sTime.Hours;
-//		lowTempMin = sTime.Minutes;
-//	}
-//
-//	if (humidity > highHumidity)
-//	{
-//		highHumidity = humidity;
-//		highHumidityHour = sTime.Hours;
-//		highHumidityMin = sTime.Minutes;
-//	}
-//
-//	if (humidity < lowHumidity)
-//	{
-//		lowHumidity = humidity;
-//		lowHumidityHour = sTime.Hours;
-//		lowHumidityMin = sTime.Minutes;
-//	}
 
 	char buffer[LCD_DISPLAY_LENGTH] = {0};
-//	snprintf(buffer, sizeof(buffer), "%.2f,%.2f,%.2f,%02d,%02d,%.2f,%02d,%02d,%.2f,%02d,%02d,%.2f,%02d,%02d\n", temperature, humidity, highTemp, highTempHour, highTempMin, lowTemp, lowTempHour, lowTempMin, highHumidity, highHumidityHour, highHumidityMin, lowHumidity, lowHumidityHour, lowHumidityMin);
 	clear_display();
 	snprintf(buffer, sizeof(buffer), "Temp: %.2f", temperature);
 	buffer[strlen(buffer)] = 0xDF;
-	buffer[strlen(buffer)] = temp_units ? 'F' : 'C';
+	buffer[strlen(buffer)] = (temp_units == FAHRENHEIT) ? 'F' : 'C';
 	printString(buffer);
 	carriage_return();
 	snprintf(buffer, sizeof(buffer), "Humidity: %.2f", humidity);
 	buffer[strlen(buffer)] = '%';
 	printString(buffer);
-
-//	HAL_UART_Transmit(&huart2, (const uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);	//send data through serial
-
-
 }
-uint8_t mode = 0; //off = 0, on = 1
-void display_off()
+
+
+void TIM14_IRQHandler_Extended()
 {
-	send_cmd(0x08);
-	microDelay(40);
+	printTemperatureAndHumidityData();
+	HAL_TIM_IRQHandler(&htim14);
+
 }
-
-void display_on()
-{
-	send_cmd(0x0C);
-	microDelay(40);
-}
-
-
 void EXTI0_1_IRQHandler_Extended()
 {
-	mode = !mode;
-	if (!mode)
+	display_mode = (display_mode == ON) ? OFF : ON;
+	if (display_mode == OFF)
 		display_off();
 	else
 		display_on();
@@ -278,10 +231,10 @@ void EXTI0_1_IRQHandler_Extended()
 }
 void EXTI4_15_IRQHandler_Extended()
 {
-	if (mode)
+	if (display_mode == ON)
 	{
-		temp_units = !temp_units;
-		printTemperatureAndHumidityData();	//prints temperature and humidity data through serial
+		temp_units = (temp_units == FAHRENHEIT) ? CELSIUS : FAHRENHEIT;
+		printTemperatureAndHumidityData();
 	}
 
 	__HAL_GPIO_EXTI_CLEAR_RISING_IT(EXTI_Button_Pin);

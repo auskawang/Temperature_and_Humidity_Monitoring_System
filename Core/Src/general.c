@@ -6,6 +6,7 @@ TIM_HandleTypeDef htim3;
 UART_HandleTypeDef huart2;
 //RTC_HandleTypeDef hrtc;
 I2C_HandleTypeDef hi2c1;
+TIM_HandleTypeDef htim14;
 
 
 /**
@@ -113,6 +114,40 @@ static void MX_TIM3_Init(void)
 		Error_Handler();
 	}
 
+}
+
+/**
+  * @brief TIM14 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM14_Init(void)
+{
+
+  /* USER CODE BEGIN TIM14_Init 0 */
+
+  /* USER CODE END TIM14_Init 0 */
+
+  /* USER CODE BEGIN TIM14_Init 1 */
+
+  /* USER CODE END TIM14_Init 1 */
+  htim14.Instance = TIM14;
+  htim14.Init.Prescaler = 60000;
+  htim14.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim14.Init.Period = 1600;
+  htim14.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim14.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim14) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_Base_Start_IT(&htim14) != HAL_OK)
+  	{
+  		Error_Handler();
+  	}
+//  /* USER CODE END TIM14_Init 2 */
+  HAL_NVIC_SetPriority(TIM14_IRQn, 3, 0);  // Set interrupt priority
+  HAL_NVIC_EnableIRQ(TIM14_IRQn);          // Enable TIM14 interrupt
 }
 
 /**
@@ -238,74 +273,6 @@ static void MX_GPIO_Init(void)
 	HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
 }
 
-//RTC_TimeTypeDef sTime = {0};
-//RTC_DateTypeDef sDate = {0};
-
-/**
-  * @brief RTC Initialization Function
-  * @param None
-  * @retval None
-  */
-//void RTC_Config(void)
-//{
-//
-//  /* USER CODE BEGIN RTC_Init 0 */
-//
-//  /* USER CODE END RTC_Init 0 */
-//
-//
-//
-//  /* USER CODE BEGIN RTC_Init 1 */
-//
-//  /* USER CODE END RTC_Init 1 */
-//
-//  /** Initialize RTC Only
-//  */
-//  hrtc.Instance = RTC;
-//  hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
-//  hrtc.Init.AsynchPrediv = 127;
-//  hrtc.Init.SynchPrediv = 255;
-//  hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
-//  hrtc.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
-//  hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
-//  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-//  hrtc.Init.OutPutPullUp = RTC_OUTPUT_PULLUP_NONE;
-//  if (HAL_RTC_Init(&hrtc) != HAL_OK)
-//  {
-//    Error_Handler();
-//  }
-//
-//  /* USER CODE BEGIN Check_RTC_BKUP */
-//
-//  /* USER CODE END Check_RTC_BKUP */
-//
-//  /** Initialize RTC and set the Time and Date
-//  */
-//  sTime.Hours = 0x2;
-//  sTime.Minutes = 0x38;
-//  sTime.Seconds = 0x0;
-//  sTime.SubSeconds = 0x0;
-//  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
-//  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
-//  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BCD) != HAL_OK)
-//  {
-//    Error_Handler();
-//  }
-//  sDate.WeekDay = RTC_WEEKDAY_SATURDAY;
-//  sDate.Month = RTC_MONTH_AUGUST;
-//  sDate.Date = 0x24;
-//  sDate.Year = 0x0;
-//
-//  if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BCD) != HAL_OK)
-//  {
-//    Error_Handler();
-//  }
-//  /* USER CODE BEGIN RTC_Init 2 */
-//
-//  /* USER CODE END RTC_Init 2 */
-//
-//}
-
 /**
   * @brief I2C1 Initialization Function
   * @param None
@@ -369,7 +336,5 @@ void bsp_init()
 	MX_TIM3_Init();
 	MX_USART2_UART_Init();
 	MX_I2C1_Init();
-//	MX_USART1_UART_Init();
-//	RTC_Config();
-
+	MX_TIM14_Init();
 }

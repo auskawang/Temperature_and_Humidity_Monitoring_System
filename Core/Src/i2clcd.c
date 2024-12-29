@@ -59,6 +59,17 @@ void carriage_return()
 	send_cmd(0xC0);
 	microDelay(1000);
 }
+void display_off()
+{
+	send_cmd(0x08);
+	microDelay(40);
+}
+
+void display_on()
+{
+	send_cmd(0x0C);
+	microDelay(40);
+}
 void send_cmd (char cmd)
 {
 	uint8_t t[BIT_MODE_4];

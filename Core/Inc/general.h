@@ -22,11 +22,5 @@ void microDelay(int microseconds);
 void setPinOutput(GPIO_TypeDef* GPIOx, uint16_t pin);
 void setPinInput(GPIO_TypeDef* GPIOx, uint16_t pin);
 uint16_t combineBytes(uint8_t left, uint8_t right);
-static void MX_TIM3_Init(void);
-static void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-static void MX_USART2_UART_Init(void);
-//static void MX_USART1_UART_Init(void);
-//static void RTC_Config(void);
 
 #endif /* INC_GENERAL_H_ */
