@@ -1,16 +1,17 @@
-/*
- * i2clcd.c
- *
- *  Created on: Dec 18, 2024
- *      Author: auska
+/**
+ * @file i2clcd.c
+ * @author Auska Wang
+ * @brief Provides functions to interface with LCD.
  */
 
+/* Includes ------------------------------------------------------------------*/
 #include "i2clcd.h"
 #include "main.h"
 #include "general.h"
-#include "dht22.h"
 #include <stdio.h>
 #include <string.h>
+
+/* Defines */
 #define PCF8574_ADDR 0x27 << 1
 #define UPPER_BITS_MASK 0xF0
 #define INSTRUCTION_REGISTER_ENABLE_ON_LIGHT_ON 0x0C
@@ -22,55 +23,91 @@
 #define DATA_REGISTER_ENABLE_ON_LIGHT_OFF 0x05
 #define DATA_REGISTER_ENABLE_OFF_LIGHT_OFF 0x01
 #define BIT_MODE_4 4
+
 extern I2C_HandleTypeDef hi2c1;
 extern UART_HandleTypeDef huart2;
-uint8_t light_mode = 1; //off = 0, on = 1
+extern uint8_t light_mode;
 
+/**
+ * @brief Initializes LCD display in 4-bit mode according to HD44780 datasheet.
+ *
+ * @return None
+ */
 void lcd_init()
 {
 	HAL_Delay(30);
-	send_cmd(0x30);
+	send_cmd(0x30, light_mode);
 	HAL_Delay(5);
-	send_cmd(0x30);
+	send_cmd(0x30, light_mode);
 	HAL_Delay(1);
-	send_cmd(0x30);
+	send_cmd(0x30, light_mode);
 	HAL_Delay(1);
-	send_cmd(0x20);
+	send_cmd(0x20, light_mode);
 	HAL_Delay(1);
 
-	send_cmd(0x28);
+	send_cmd(0x28, light_mode);
 	HAL_Delay(1);
-	send_cmd(0x08);
+	send_cmd(0x08, light_mode);
 	HAL_Delay(1);
-	send_cmd(0x01);
+	send_cmd(0x01, light_mode);
 	HAL_Delay(1);
-	send_cmd(0x06);
+	send_cmd(0x06, light_mode);
 	HAL_Delay(1);
-	send_cmd(0x0C);
+	send_cmd(0x0C, light_mode);
 	HAL_Delay(1);
 }
+
+/**
+ * @brief Clears display of LCD.
+ *
+ * @return None
+ */
 void clear_display()
 {
-	send_cmd(0x01);
-	microDelay(2000);
-}
-void carriage_return()
-{
-	send_cmd(0xC0);
-	microDelay(1000);
-}
-void display_off()
-{
-	send_cmd(0x08);
-	microDelay(40);
+	send_cmd(0x01, light_mode);
+	micro_delay(2000);
 }
 
+/**
+ * @brief Moves cursor to second line of the LCD.
+ *
+ * @return None
+ */
+void carriage_return()
+{
+	send_cmd(0xC0, light_mode);
+	micro_delay(1000);
+}
+
+/**
+ * @brief Turns the LCD display off.
+ *
+ * @return None
+ */
+void display_off()
+{
+	send_cmd(0x08, light_mode);
+	micro_delay(40);
+}
+
+/**
+ * @brief Turns the LCD display on.
+ *
+ * @return None
+ */
 void display_on()
 {
-	send_cmd(0x0C);
-	microDelay(40);
+	send_cmd(0x0C, light_mode);
+	micro_delay(40);
 }
-void send_cmd (char cmd)
+
+/**
+ * @brief Sends data to instruction register of LCD.
+ *
+ * @param cmd Instruction byte to be sent, light_mode Backlight on or off
+ * @return None
+ */
+void send_cmd (char cmd, uint8_t light_mode)
 {
 	uint8_t t[BIT_MODE_4];
 	char u, l;
@@ -85,7 +122,14 @@ void send_cmd (char cmd)
 	if (HAL_I2C_Master_Transmit(&hi2c1, PCF8574_ADDR, t, sizeof(t), HAL_MAX_DELAY) != HAL_OK)
 		Error_Handler();
 }
-void send_data (char data)
+
+/**
+ * @brief Sends data to data register of LCD.
+ *
+ * @param cmd Instruction byte to be sent, light_mode Backlight on or off
+ * @return None
+ */
+void send_data (char data, uint8_t light_mode)
 {
 	uint8_t t[BIT_MODE_4];
 	char u, l;
@@ -100,17 +144,18 @@ void send_data (char data)
 	if (HAL_I2C_Master_Transmit(&hi2c1, PCF8574_ADDR, t, sizeof(t), HAL_MAX_DELAY) != HAL_OK)
 		Error_Handler();
 }
-void printString(char str[])
+
+/**
+ * @brief Prints a given string to the LCD.
+ *
+ * @param str[] Char array/string to be printed, light_mode Backlight on or off
+ * @return None
+ */
+void printString(char str[], uint8_t light_mode)
 {
 	for (int i = 0; i < strlen(str); i++)
 	{
-		send_data(str[i]);
+		send_data(str[i], light_mode);
 	}
 }
-void EXTI2_3_IRQHandler_Extended()
-{
-	light_mode = !light_mode;
-	printTemperatureAndHumidityData();
-	__HAL_GPIO_EXTI_CLEAR_RISING_IT(LIGHT_Button_Pin);
 
-}

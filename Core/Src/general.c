@@ -1,23 +1,32 @@
+/**
+ * @file general.c
+ * @author Auska Wang
+ * @brief Contains functions that
+ *        - configure hardware and communication protocols
+ *        - provide general functionality such as delay
+ */
+
+/* Includes */
 #include "general.h"
-#include "main.h"
+#include <stdint.h>
+#include "stm32c0xx_hal.h"
+#include "i2clcd.h"
 
 /* Variables */
 TIM_HandleTypeDef htim3;
 UART_HandleTypeDef huart2;
-//RTC_HandleTypeDef hrtc;
 I2C_HandleTypeDef hi2c1;
 TIM_HandleTypeDef htim14;
 
-
 /**
- * @brief microsecond delay
+ * @brief Microsecond delay
  *
  * This function uses Timer 3 to generate microsecond delays
  *
- * @param int microseconds
+ * @param microseconds Number of microseconds to delay
  * @return None
  */
-void microDelay(int microseconds)
+void micro_delay(int microseconds)
 {
 	__HAL_TIM_SET_COUNTER(&htim3, 0);	//set timer to 0
 	//each count of timer 3 is adjusted to last for 1 microsecond
@@ -26,52 +35,26 @@ void microDelay(int microseconds)
 }
 
 /**
- * @brief Switch pin output
+ * @brief Sets and configures desired pin to output or input mode
  *
- * This function switches given pin to output mode
- *
- * @param GPIO_TypeDef* GPIOx, uint16_t pin
+ * @param GPIOx Register struct for pin, pin The desired pin to configure, mode Input or output
  * @return None
  */
-void setPinOutput(GPIO_TypeDef* GPIOx, uint16_t pin)
+void set_pin_mode(GPIO_TypeDef* GPIOx, uint16_t pin, GPIO_Mode mode)
 {
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
-	GPIO_InitStruct.Pin = pin;						//select given pin
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;		//change to output mode
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	GPIO_InitStruct.Pin = pin;
+	if (mode == GPIO_INPUT)
+	{
+		GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	}
+	else
+	{
+		GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;		//change to output mode
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	}
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
-}
-
-/**
- * @brief Switch pin input
- *
- * This function switches given pin to input mode
- *
- * @param GPIO_TypeDef* GPIOx, uint16_t pin
- * @return None
- */
-void setPinInput(GPIO_TypeDef* GPIOx, uint16_t pin)
-{
-	GPIO_InitTypeDef GPIO_InitStruct = {0};
-	GPIO_InitStruct.Pin = pin;					//select given pin
-	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;		//change to input mode
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
-}
-
-/**
- * @brief Combine bytes
- *
- * This function calculates resulting value given two bytes, where the left byte is the first 8 bits
- * and the right byte is the second 8 bits, resulting in 16 bits to be converted to decimal
- *
- * @param GPIO_TypeDef* GPIOx, uint16_t pin
- * @return None
- */
-uint16_t combineBytes(uint8_t left, uint8_t right)
-{
-	return (uint16_t)left << 8 | (uint16_t)right;
 }
 
 /**
@@ -320,6 +303,25 @@ static void MX_I2C1_Init(void)
   /* USER CODE END I2C1_Init 2 */
 
 }
+
+/**
+ * @brief Error Handler
+ *
+ * This function handles errors where the program is forced into an endless loop
+ *
+ * @param None
+ * @return None
+ */
+void Error_Handler(void)
+{
+
+  __disable_irq();
+  while (1)
+  {
+  }
+
+}
+
 /**
  * @brief Board Init
  *
@@ -328,7 +330,7 @@ static void MX_I2C1_Init(void)
  * @param None
  * @return None
  */
-void bsp_init()
+void hardware_init()
 {
 	HAL_Init();
 	SystemClock_Config();
@@ -337,4 +339,22 @@ void bsp_init()
 	MX_USART2_UART_Init();
 	MX_I2C1_Init();
 	MX_TIM14_Init();
+	lcd_init();
 }
+
+#ifdef  USE_FULL_ASSERT
+/**
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
+void assert_failed(uint8_t *file, uint32_t line)
+{
+  /* USER CODE BEGIN 6 */
+  /* User can add his own implementation to report the file name and line number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  /* USER CODE END 6 */
+}
+#endif /* USE_FULL_ASSERT */

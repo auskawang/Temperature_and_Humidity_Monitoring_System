@@ -7,12 +7,12 @@
 
 #ifndef INC_I2CLCD_H_
 #define INC_I2CLCD_H_
-
+#include <stdint.h>
 /* Function prototypes ------------------------------------------------------------------*/
 void lcd_init();
-void send_cmd(char);
-void send_data(char);
-void printString(char[]);
+void send_cmd(char, uint8_t);
+void send_data(char, uint8_t);
+void printString(char[], uint8_t);
 void clear_display();
 void carriage_return();
 void display_off();
