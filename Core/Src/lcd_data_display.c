@@ -71,6 +71,10 @@ void TIM14_IRQHandler_Extended()
  */
 void EXTI0_1_IRQHandler_Extended()
 {
+	micro_delay(50000); //debouncing
+	micro_delay(50000); //debouncing
+	micro_delay(50000); //debouncing
+
 	display_mode = (display_mode == ON) ? OFF : ON;
 	if (display_mode == OFF)
 		display_off();
@@ -89,6 +93,10 @@ void EXTI0_1_IRQHandler_Extended()
  */
 void EXTI2_3_IRQHandler_Extended()
 {
+	micro_delay(50000); //debouncing
+	micro_delay(50000); //debouncing
+	micro_delay(50000); //debouncing
+
 	light_mode = !light_mode;
 	print_temp_and_humidity_data();
 	__HAL_GPIO_EXTI_CLEAR_RISING_IT(LIGHT_Button_Pin);
@@ -103,6 +111,10 @@ void EXTI2_3_IRQHandler_Extended()
  */
 void EXTI4_15_IRQHandler_Extended()
 {
+	micro_delay(50000); //debouncing
+	micro_delay(50000); //debouncing
+	micro_delay(50000); //debouncing
+
 	if (display_mode == ON)
 	{
 		temp_units = (temp_units == FAHRENHEIT) ? CELSIUS : FAHRENHEIT;
