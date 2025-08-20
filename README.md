@@ -6,7 +6,7 @@ then displayed through a I²C LCD. The setup provides temperature and humidity i
 and other boilerplate code required to flash the STM32 board. I developed the code needed to interact with the DHT22 by mainly using a custom microsecond delay function
 and STM32's read pin function and developed the code needed to interact with I²C and used STM32's I²C transmit function to send data.
 
-![Block Diagram](blockdiagram.jpg?raw=true "Block Diagram")
+![Block Diagram](blockdiagram.png?raw=true "Block Diagram")
 
 Above represents a simple block diagram of this project
 ### DHT22
@@ -35,7 +35,7 @@ https://youtu.be/Xr0c_5vThYU
 ## Setup
 
 ### Wiring Diagram
-![Wiring Diagram](wiringdiagram.jpg?raw=true "Wiring Diagram")
+![Wiring Diagram](wiringdiagram.png?raw=true "Wiring Diagram")
 
 ### Peripherals
 - STM32 NUCLEOC031C6 microcontroller
