@@ -14,7 +14,7 @@
 
 /* Variables */
 TIM_HandleTypeDef htim3;
-UART_HandleTypeDef huart2;
+//UART_HandleTypeDef huart2;
 I2C_HandleTypeDef hi2c1;
 TIM_HandleTypeDef htim14;
 
@@ -179,26 +179,24 @@ static void SystemClock_Config(void)
  * @param None
  * @return None
  */
-static void MX_USART2_UART_Init(void)
-{
-	huart2.Instance = USART2;
-	huart2.Init.BaudRate = 9600;
-	huart2.Init.WordLength = UART_WORDLENGTH_8B;
-	huart2.Init.StopBits = UART_STOPBITS_1;
-	huart2.Init.Parity = UART_PARITY_NONE;
-	huart2.Init.Mode = UART_MODE_TX_RX;
-	huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-	huart2.Init.OverSampling = UART_OVERSAMPLING_16;
-	huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-	huart2.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-	huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-	if (HAL_UART_Init(&huart2) != HAL_OK)
-	{
-		Error_Handler();
-	}
-
-
-}
+//static void MX_USART2_UART_Init(void)
+//{
+//	huart2.Instance = USART2;
+//	huart2.Init.BaudRate = 9600;
+//	huart2.Init.WordLength = UART_WORDLENGTH_8B;
+//	huart2.Init.StopBits = UART_STOPBITS_1;
+//	huart2.Init.Parity = UART_PARITY_NONE;
+//	huart2.Init.Mode = UART_MODE_TX_RX;
+//	huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+//	huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+//	huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+//	huart2.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+//	huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+//	if (HAL_UART_Init(&huart2) != HAL_OK)
+//	{
+//		Error_Handler();
+//	}
+//}
 
 /**
  * @brief GPIO Init
@@ -225,11 +223,11 @@ static void MX_GPIO_Init(void)
 	HAL_GPIO_Init(DHT22_Port, &GPIO_InitStruct);
 
 
-	/*Configure GPIO pin : BUTTON_Pin */
-	GPIO_InitStruct.Pin = EXTI_Button_Pin;
+	/*Configure GPIO pin : UNITS_Button */
+	GPIO_InitStruct.Pin = UNITS_Button_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
 	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-	HAL_GPIO_Init(EXTI_Button_Port, &GPIO_InitStruct);
+	HAL_GPIO_Init(UNITS_Button_Port, &GPIO_InitStruct);
 
 	/*Configure GPIO pin : LIGHT_Button */
 	GPIO_InitStruct.Pin = LIGHT_Button_Pin;
@@ -237,21 +235,11 @@ static void MX_GPIO_Init(void)
 	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 	HAL_GPIO_Init(LIGHT_Button_Port, &GPIO_InitStruct);
 
-	/*Configure GPIO pin : ON/OFF Button */
-	GPIO_InitStruct.Pin = ON_OFF_Button_Pin;
-	GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-	HAL_GPIO_Init(ON_OFF_Button_Port, &GPIO_InitStruct);
-
-	//ON_OFF_Button priority
-	HAL_NVIC_SetPriority(EXTI0_1_IRQn, 0, 0);
-	HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
-
 	//LIGHT_Button priority
 	HAL_NVIC_SetPriority(EXTI2_3_IRQn, 1, 0);
 	HAL_NVIC_EnableIRQ(EXTI2_3_IRQn);
 
-	//BUTTON_Pin priority
+	//UNITS_Button_Pin priority
 	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 2, 0);
 	HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
 }
@@ -314,12 +302,8 @@ static void MX_I2C1_Init(void)
  */
 void Error_Handler(void)
 {
-
   __disable_irq();
-  while (1)
-  {
-  }
-
+  while (1) {}
 }
 
 /**
@@ -336,7 +320,7 @@ void hardware_init()
 	SystemClock_Config();
 	MX_GPIO_Init();
 	MX_TIM3_Init();
-	MX_USART2_UART_Init();
+	//MX_USART2_UART_Init();
 	MX_I2C1_Init();
 	MX_TIM14_Init();
 	lcd_init();

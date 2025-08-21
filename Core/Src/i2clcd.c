@@ -25,7 +25,6 @@
 #define BIT_MODE_4 4
 
 extern I2C_HandleTypeDef hi2c1;
-extern UART_HandleTypeDef huart2;
 extern uint8_t light_mode;
 
 /**

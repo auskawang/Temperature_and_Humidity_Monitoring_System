@@ -21,8 +21,8 @@
  */
 #define DHT22_Port GPIOA
 #define DHT22_Pin GPIO_PIN_9
-#define EXTI_Button_Port GPIOA
-#define EXTI_Button_Pin GPIO_PIN_7
+#define UNITS_Button_Port GPIOA
+#define UNITS_Button_Pin GPIO_PIN_7
 #define ON_OFF_Button_Port GPIOB
 #define ON_OFF_Button_Pin GPIO_PIN_0
 #define LIGHT_Button_Pin GPIO_PIN_3
