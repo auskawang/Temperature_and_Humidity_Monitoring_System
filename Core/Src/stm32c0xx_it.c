@@ -154,14 +154,6 @@ void TIM14_IRQHandler(void)
 /* please refer to the startup file (startup_stm32c0xx.s).                    */
 /******************************************************************************/
 /**
-  * @brief This function handles EXTI line 0 to 1 interrupts.
-  */
-void EXTI0_1_IRQHandler(void)
-{
-	EXTI0_1_IRQHandler_Extended();
-}
-
-/**
   * @brief This function handles EXTI line 2 to 3 interrupts.
   */
 void EXTI2_3_IRQHandler(void)
@@ -173,7 +165,6 @@ void EXTI2_3_IRQHandler(void)
   */
 void EXTI4_15_IRQHandler(void)
 {
-	//FIXME: update some variable to switch between C and F
   /* USER CODE BEGIN EXTI4_15_IRQn 0 */
 
   /* USER CODE END EXTI4_15_IRQn 0 */

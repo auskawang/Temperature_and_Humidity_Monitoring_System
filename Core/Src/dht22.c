@@ -62,7 +62,7 @@ static DHT22_Status DHT22_start(void)
 }
 
 /**
- * @brief Acquisition of data bytes
+ * @brief Reads a byte of data from DHT22.
  *
  * @param None
  * @return Byte of data received from sensor
@@ -163,7 +163,7 @@ void DHT22_getData(DHT22_Data* data)
 	  data->humidity_second_byte = DHT22_read();	//second byte from sensor is second byte of humidity data
 	  data->temp_first_byte = DHT22_read();	//third byte from sensor is first byte of temperature data
 	  data->temp_second_byte = DHT22_read();	//fourth byte from sensor is second byte of temperature data
-	  data->check_byte = DHT22_read();//fifth byte from sensor is check sum data
+	  data->check_byte = DHT22_read(); //fifth byte from sensor is check sum data
 	}
 
 	//if sensor is not responding, give error

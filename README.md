@@ -58,10 +58,12 @@ https://youtu.be/Xr0c_5vThYU
 8. Flash
 
 ### Usage
-1. Press buttons accordingly to toggle temperature units or to toggle backlight of display.
+1. Press buttons to toggle temperature units or to toggle backlight of display.
 ---
 ## Vision
 in progress
 ## Issues/Improvements
 1. Code documentation needs to be more specific, unnecessary functions (USART setup) exist too.
-2. Pressing buttons around 10 times in quick succession causes program to Error
+2. Pressing buttons around 10 times in quick succession causes program to Error.
+3. On startup, LCD occasionally outputs garbage, resulting in the need to reset the board to display the correct information.
+4. Checksum data from DHT22 is not being utilized to ensure correctness of incoming data.

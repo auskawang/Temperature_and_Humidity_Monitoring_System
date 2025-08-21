@@ -63,31 +63,9 @@ void TIM14_IRQHandler_Extended()
 }
 
 /**
- * @brief ISR for EXTI0_1 interrupts
- *
- * An interrupt will toggle the LCD display on and off.
- * @param None
- * @return none
- */
-void EXTI0_1_IRQHandler_Extended()
-{
-	micro_delay(50000); //debouncing
-	micro_delay(50000); //debouncing
-	micro_delay(50000); //debouncing
-
-	display_mode = (display_mode == ON) ? OFF : ON;
-	if (display_mode == OFF)
-		display_off();
-	else
-		display_on();
-	__HAL_GPIO_EXTI_CLEAR_RISING_IT(ON_OFF_Button_Pin);
-
-}
-
-/**
  * @brief ISR for EXTI2_3 interrupts
  *
- * An interrupt will toggle the backlight of the LCD
+ * An interrupt will toggle the back light of the LCD, linked to PB3, rising edge
  * @param None
  * @return none
  */
@@ -105,7 +83,7 @@ void EXTI2_3_IRQHandler_Extended()
 /**
  * @brief ISR for EXTI4_15 interrupts
  *
- * An interrupt will toggle the units for temperature.
+ * An interrupt will toggle the units for temperature, linked to PA7, rising edge
  * @param None
  * @return none
  */
@@ -121,5 +99,5 @@ void EXTI4_15_IRQHandler_Extended()
 		print_temp_and_humidity_data();
 	}
 
-	__HAL_GPIO_EXTI_CLEAR_RISING_IT(EXTI_Button_Pin);
+	__HAL_GPIO_EXTI_CLEAR_RISING_IT(UNITS_Button_Pin);
 }
