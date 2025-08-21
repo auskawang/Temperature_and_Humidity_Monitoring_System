@@ -48,13 +48,14 @@ https://youtu.be/Xr0c_5vThYU
 - HAL
 
 ### Build & Flash
-1. Clone and open STM32CubeIDE, which will open the specified workspace.
-2. File -> Import -> General -> Existing Projects into Workspace. Select root directory where the cloned repo is stored, check the box next to the name of the repo in the Projects results box, then click Finish
-3. Wire accordingly to the wiring diagram
-4. Connect board via ST-Link port
-5. Select the project in Project Explorer on left hand side.
-6. Build
-7. Flash
+1. Clone and open STM32CubeIDE. The location of the workspace does not matter relative to the cloned repo.
+2. Open the Project Explorer tab (Window -> Show View -> Project Explorer)
+3. File -> Import -> General -> Existing Projects into Workspace. Select root directory where the cloned repo is stored, check the box next to the name of the repo in the Projects results box, then click Finish. The project will appear in the Project Explorer.
+4. Wire accordingly to the wiring diagram
+5. Connect board via ST-Link port
+6. Select the project in Project Explorer on left hand side.
+7. Build
+8. Flash
 
 ### Usage
 1. Press buttons accordingly to toggle temperature units or to toggle backlight of display.
