@@ -48,11 +48,13 @@ https://youtu.be/Xr0c_5vThYU
 - HAL
 
 ### Build & Flash
-1. Clone and open project in STM32CubeIDE
-2. Wire accordingly to the wiring diagram
-3. Connect board via ST-Link port
-4. Build
-5. Flash
+1. Clone and open STM32CubeIDE, which will open the specified workspace.
+2. File -> Import -> General -> Existing Projects into Workspace. Select root directory where the cloned repo is stored, check the box next to the name of the repo in the Projects results box, then click Finish
+3. Wire accordingly to the wiring diagram
+4. Connect board via ST-Link port
+5. Select the project in Project Explorer on left hand side.
+6. Build
+7. Flash
 
 ### Usage
 1. Press buttons accordingly to toggle temperature units or to toggle backlight of display.
@@ -60,4 +62,5 @@ https://youtu.be/Xr0c_5vThYU
 ## Vision
 in progress
 ## Issues/Improvements
-1. Code documentation
+1. Code documentation needs to be more specific, unnecessary functions (USART setup) exist too.
+2. Pressing buttons around 10 times in quick succession causes program to Error
