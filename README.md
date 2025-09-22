@@ -50,7 +50,7 @@ https://youtu.be/Xr0c_5vThYU
 ### Build & Flash
 1. Clone and open STM32CubeIDE. The location of the workspace does not matter relative to the cloned repo.
 2. Open the Project Explorer tab (Window -> Show View -> Project Explorer)
-3. File -> Import -> General -> Existing Projects into Workspace. Select root directory where the cloned repo is stored, check the box next to the name of the repo in the Projects results box, then click Finish. The project will appear in the Project Explorer.
+3. File -> Import -> General -> Existing Projects into Workspace. Select the "Select root directory" option and input the root directory where the cloned repo is stored, check the box next to the name of the repo in the Projects results box, then click Finish. The project will appear in the Project Explorer.
 4. Wire accordingly to the wiring diagram
 5. Connect board via ST-Link port
 6. Select the project in Project Explorer on left hand side.
