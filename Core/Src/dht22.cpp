@@ -1,8 +1,12 @@
 /**
- * @file dht22.c
+ * @file dht22.cpp
  * @author Auska Wang
  * @brief Functions for gathering useful with the DHT22 sensor
  */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Includes */
 #include <string.h>
@@ -29,11 +33,11 @@ static DHT22_Status DHT22_start(void)
 	set_pin_mode(DHT22_Port, DHT22_Pin, GPIO_OUTPUT);
 
 	//MCU pulls the data line low for at least 1 - 10 ms
-	HAL_GPIO_WritePin(DHT22_Port, DHT22_Pin, 0);
+	HAL_GPIO_WritePin(DHT22_Port, DHT22_Pin, (GPIO_PinState)0);
 	micro_delay(5000); //5 ms delay
 
 	//MCU pulls the data line high and waits 20 - 40 us for DHT22 response
-	HAL_GPIO_WritePin(DHT22_Port, DHT22_Pin, 1);
+	HAL_GPIO_WritePin(DHT22_Port, DHT22_Pin, (GPIO_PinState)1);
 	micro_delay(30);	//30 us delay
 
 	set_pin_mode(DHT22_Port, DHT22_Pin, GPIO_INPUT);	//switch to input mode to detect response from DHT22 sensor
@@ -170,3 +174,7 @@ void DHT22_getData(DHT22_Data* data)
 	else
 	  Error_Handler();
 }
+
+#ifdef __cplusplus
+}
+#endif
