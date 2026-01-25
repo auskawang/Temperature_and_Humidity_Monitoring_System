@@ -323,7 +323,7 @@ void hardware_init()
 	//MX_USART2_UART_Init();
 	MX_I2C1_Init();
 	MX_TIM14_Init();
-	lcd_init();
+	//lcd_init();
 }
 
 #ifdef  USE_FULL_ASSERT

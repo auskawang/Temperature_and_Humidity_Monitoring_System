@@ -4,6 +4,10 @@
  * @brief Provides functions to interface with LCD.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Includes ------------------------------------------------------------------*/
 #include "i2clcd.h"
 #include "main.h"
@@ -32,27 +36,27 @@ extern uint8_t light_mode;
  *
  * @return None
  */
-void lcd_init()
+void I2CLCD::lcd_init()
 {
 	HAL_Delay(30);
-	send_cmd(0x30, light_mode);
+	send_cmd(0x30);
 	HAL_Delay(5);
-	send_cmd(0x30, light_mode);
+	send_cmd(0x30);
 	HAL_Delay(1);
-	send_cmd(0x30, light_mode);
+	send_cmd(0x30);
 	HAL_Delay(1);
-	send_cmd(0x20, light_mode);
+	send_cmd(0x20);
 	HAL_Delay(1);
 
-	send_cmd(0x28, light_mode);
+	send_cmd(0x28);
 	HAL_Delay(1);
-	send_cmd(0x08, light_mode);
+	send_cmd(0x08);
 	HAL_Delay(1);
-	send_cmd(0x01, light_mode);
+	send_cmd(0x01);
 	HAL_Delay(1);
-	send_cmd(0x06, light_mode);
+	send_cmd(0x06);
 	HAL_Delay(1);
-	send_cmd(0x0C, light_mode);
+	send_cmd(0x0C);
 	HAL_Delay(1);
 }
 
@@ -61,9 +65,9 @@ void lcd_init()
  *
  * @return None
  */
-void clear_display()
+void I2CLCD::clear_display()
 {
-	send_cmd(0x01, light_mode);
+	send_cmd(0x01);
 	micro_delay(2000);
 }
 
@@ -72,9 +76,9 @@ void clear_display()
  *
  * @return None
  */
-void carriage_return()
+void I2CLCD::carriage_return()
 {
-	send_cmd(0xC0, light_mode);
+	send_cmd(0xC0);
 	micro_delay(1000);
 }
 
@@ -83,22 +87,22 @@ void carriage_return()
  *
  * @return None
  */
-void display_off()
-{
-	send_cmd(0x08, light_mode);
-	micro_delay(40);
-}
+//void display_off()
+//{
+//	send_cmd(0x08, light_mode);
+//	micro_delay(40);
+//}
 
 /**
  * @brief Turns the LCD display on.
  *
  * @return None
  */
-void display_on()
-{
-	send_cmd(0x0C, light_mode);
-	micro_delay(40);
-}
+//void display_on()
+//{
+//	send_cmd(0x0C, light_mode);
+//	micro_delay(40);
+//}
 
 /**
  * @brief Sends data to instruction register of LCD.
@@ -106,7 +110,7 @@ void display_on()
  * @param cmd Instruction byte to be sent, light_mode Backlight on or off
  * @return None
  */
-void send_cmd (char cmd, uint8_t light_mode)
+void I2CLCD::send_cmd (char cmd)
 {
 	uint8_t t[BIT_MODE_4];
 	char u, l;
@@ -150,11 +154,14 @@ void send_data (char data, uint8_t light_mode)
  * @param str[] Char array/string to be printed, light_mode Backlight on or off
  * @return None
  */
-void printString(char str[], uint8_t light_mode)
+void I2CLCD::printString(char str[])
 {
-	for (int i = 0; i < strlen(str); i++)
+	for (int i = 0; i < (uint8_t)strlen(str); i++)
 	{
 		send_data(str[i], light_mode);
 	}
 }
 
+#ifdef __cplusplus
+}
+#endif

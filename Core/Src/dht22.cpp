@@ -1,7 +1,7 @@
 /**
  * @file dht22.cpp
  * @author Auska Wang
- * @brief Functions for gathering useful with the DHT22 sensor
+ * @brief Functions related to DHT22 startup and data acquisition
  */
 
 #ifdef __cplusplus
@@ -22,13 +22,14 @@ extern "C" {
 extern UART_HandleTypeDef huart2;
 extern TIM_HandleTypeDef htim14;
 
+
 /**
  * @brief Initializes the DHT22 sensor and prepares for reading from sensor.
  *
  * @param None
  * @return Status of DHT22 after initialization process, which is either success or fail.
  */
-static DHT22_Status DHT22_start(void)
+void DHT22::DHT22_start(void)
 {
 	set_pin_mode(DHT22_Port, DHT22_Pin, GPIO_OUTPUT);
 
@@ -42,7 +43,7 @@ static DHT22_Status DHT22_start(void)
 
 	set_pin_mode(DHT22_Port, DHT22_Pin, GPIO_INPUT);	//switch to input mode to detect response from DHT22 sensor
 
-	DHT22_Status response = DHT22_RESPONSE_FAIL;	//flag that shows whether responsiveness of DHT22 sensor, 0 if failed, 1 if successful
+	status = DHT22_RESPONSE_FAIL;	//flag that shows whether responsiveness of DHT22 sensor, 0 if failed, 1 if successful
 
 		//sensor will pull the data line low for 80 us
 		micro_delay(40);	//40 us delay
@@ -55,14 +56,12 @@ static DHT22_Status DHT22_start(void)
 
 			//if successful, data line should still be high since at this moment program is in the middle of sensor pulling data line high
 			if (HAL_GPIO_ReadPin(DHT22_Port, DHT22_Pin))
-				response = DHT22_RESPONSE_SUCCESSFUL;	//assign response with 1 since response of sensor is successful
+				status = DHT22_RESPONSE_SUCCESSFUL;	//assign response with 1 since response of sensor is successful
 		}
 
 		//wait until data line pulls low, where acquisition of data will start
 		while (HAL_GPIO_ReadPin(DHT22_Port, DHT22_Pin))
 		{}
-
-		return response;
 }
 
 /**
@@ -118,9 +117,10 @@ uint16_t combineBytes(uint8_t upper, uint8_t lower)
  *       If t1 = 0000 0001 and t2 = 0101 1111, combine them to get 0000 0001 0101 1111 = 351,
  *       and finally divide by 10 -> 351 / 10 = 35.1 Celsius
  */
-float getTemperatureC(uint8_t t1, uint8_t t2)
+float DHT22::getTemperatureC()
 {
-	return combineBytes(t1, t2) / 10.0;
+	DHT22_getData();
+	return combineBytes(data.temp_first_byte, data.temp_second_byte) / 10.0;
 }
 
 /**
@@ -131,9 +131,9 @@ float getTemperatureC(uint8_t t1, uint8_t t2)
  * @param t1 Upper temperature byte, t2 Lower temperature byte
  * @return Temperature expressed in Fahrenheit
  */
-float getTemperatureF(uint8_t t1, uint8_t t2)
+float DHT22::getTemperatureF()
 {
-	return 9.0 / 5.0 * getTemperatureC(t1, t2) + 32;
+	return 9.0 / 5.0 * getTemperatureC() + 32;
 }
 
 /**
@@ -145,9 +145,10 @@ float getTemperatureF(uint8_t t1, uint8_t t2)
  *       If h1 = 0000 0010 and h2 = 1000 1100, combine them to get 0000 0010 1000 1100 = 652,
  *       and finally divide by 10 -> 652 / 10 = 65.2%
  */
-float getHumidity(uint8_t h1, uint8_t h2)
+float DHT22::getHumidity()
 {
-	return combineBytes(h1, h2) / 10.0;
+	DHT22_getData();
+	return combineBytes(data.humidity_first_byte, data.humidity_second_byte) / 10.0;
 }
 
 /**
@@ -158,16 +159,17 @@ float getHumidity(uint8_t h1, uint8_t h2)
  * @param data Pointer to DHT22_Data struct where information will be stored in
  * @return none
  */
-void DHT22_getData(DHT22_Data* data)
+void DHT22::DHT22_getData()
 {
+	DHT22_start();
 	//if sensor is responsive
-	if (DHT22_start() == DHT22_RESPONSE_SUCCESSFUL)
+	if (status == DHT22_RESPONSE_SUCCESSFUL)
 	{
-	  data->humidity_first_byte = DHT22_read();	//first byte from sensor is first byte of humidity data
-	  data->humidity_second_byte = DHT22_read();	//second byte from sensor is second byte of humidity data
-	  data->temp_first_byte = DHT22_read();	//third byte from sensor is first byte of temperature data
-	  data->temp_second_byte = DHT22_read();	//fourth byte from sensor is second byte of temperature data
-	  data->check_byte = DHT22_read(); //fifth byte from sensor is check sum data
+	  data.humidity_first_byte = DHT22_read();	//first byte from sensor is first byte of humidity data
+	  data.humidity_second_byte = DHT22_read();	//second byte from sensor is second byte of humidity data
+	  data.temp_first_byte = DHT22_read();	//third byte from sensor is first byte of temperature data
+	  data.temp_second_byte = DHT22_read();	//fourth byte from sensor is second byte of temperature data
+	  data.check_byte = DHT22_read(); //fifth byte from sensor is check sum data
 	}
 
 	//if sensor is not responding, give error

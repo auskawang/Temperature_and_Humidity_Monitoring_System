@@ -142,6 +142,7 @@ void TIM14_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM14_IRQn 0 */
 	TIM14_IRQHandler_Extended();
+
   /* USER CODE END TIM14_IRQn 0 */
   /* USER CODE BEGIN TIM14_IRQn 1 */
 
@@ -158,7 +159,7 @@ void TIM14_IRQHandler(void)
   */
 void EXTI2_3_IRQHandler(void)
 {
-	EXTI2_3_IRQHandler_Extended();
+	//EXTI2_3_IRQHandler_Extended();
 }
 /**
   * @brief This function handles EXTI line 4 to 15 interrupts.
@@ -168,7 +169,7 @@ void EXTI4_15_IRQHandler(void)
   /* USER CODE BEGIN EXTI4_15_IRQn 0 */
 
   /* USER CODE END EXTI4_15_IRQn 0 */
-	EXTI4_15_IRQHandler_Extended();
+	//EXTI4_15_IRQHandler_Extended();
 
   /* USER CODE BEGIN EXTI4_15_IRQn 1 */
 

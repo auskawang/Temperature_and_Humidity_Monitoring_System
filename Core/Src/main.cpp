@@ -15,13 +15,21 @@
   ******************************************************************************
   */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Includes */
 #include "main.h"
 #include "general.h"
-#include "lcd_data_display.h"
+#include "dht22.h"
+#include "i2clcd.h"
 #include <stdio.h>
 #include <string.h>
 
+
+DHT22 dht22;
+I2CLCD i2clcd;
 /**
  * @brief main
  *
@@ -32,12 +40,22 @@
  */
 int main(void)
 {
-	hardware_init();
-	print_temp_and_humidity_data();
+	hardware_init(); //contains hardware initialization for this specific board
+	i2clcd.lcd_init();	//initializes LCD
     while (1)
     {
+    	float temperature = dht22.getTemperatureF();
+    	char buffer[16];
+    	snprintf(buffer, 16, "%.2f", temperature);
+		i2clcd.clear_display();
+    	i2clcd.printString(buffer);
+    	HAL_Delay(2000);
     }
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 
 

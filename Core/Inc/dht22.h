@@ -3,11 +3,7 @@
  * @author Auska Wang
  * @brief Header file of dht22.c
  * 	      This file contains
- * 	      - the functions necessary to extract
- * 	      temperature and humidity readings from DHT22 sensor.
- * 	      - DHT22_Data struct to consolidate
- * 	      data bytes, making the process of obtaining data bytes
- * 	      more intuitive for other modules.
+ * 	      - DHT22 class with functions to get temperature and humidity data
  */
 
 #ifndef INC_DHT22_H_
@@ -17,7 +13,7 @@
 #include <stdint.h>
 
 /**
- * @brief Status of DHT22 used during communication process.
+ * @brief Status of DHT22 during communication process.
  */
 typedef enum {
 	DHT22_RESPONSE_FAIL			= 0,
@@ -25,7 +21,7 @@ typedef enum {
 } DHT22_Status;
 
 /**
- * @brief Holds data bytes sent by DHT22.
+ * @brief Holds data bytes acquired from DHT22.
  */
 typedef struct {
 	uint8_t temp_first_byte;
@@ -35,10 +31,20 @@ typedef struct {
 	uint8_t check_byte;
 } DHT22_Data;
 
-/* Function prototypes ------------------------------------------------------------------*/
-void DHT22_getData(DHT22_Data* data);
-float getTemperatureC(uint8_t, uint8_t);
-float getTemperatureF(uint8_t, uint8_t);
-float getHumidity(uint8_t, uint8_t);
+#ifdef __cplusplus
+class DHT22 {
+	private:
+		DHT22_Status status;
+		DHT22_Data data;
+		void DHT22_start(void);
+		void DHT22_getData();
+	public:
+		float getTemperatureC();
+		float getTemperatureF();
+		float getHumidity();
+};
+#endif
 
 #endif /* INC_DHT22_H_ */
+
+
