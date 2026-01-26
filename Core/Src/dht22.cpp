@@ -103,7 +103,7 @@ static uint8_t DHT22_read(void)
  * @param upper Upper byte, lower Lower byte
  * @return Decimal value after combining upper and lower bytes
  */
-uint16_t combineBytes(uint8_t upper, uint8_t lower)
+static uint16_t combine_bytes(uint8_t upper, uint8_t lower)
 {
 	return (uint16_t)upper << 8 | (uint16_t)lower;
 }
@@ -117,23 +117,9 @@ uint16_t combineBytes(uint8_t upper, uint8_t lower)
  *       If t1 = 0000 0001 and t2 = 0101 1111, combine them to get 0000 0001 0101 1111 = 351,
  *       and finally divide by 10 -> 351 / 10 = 35.1 Celsius
  */
-float DHT22::getTemperatureC()
+float DHT22::get_temperature()
 {
-	DHT22_getData();
-	return combineBytes(data.temp_first_byte, data.temp_second_byte) / 10.0;
-}
-
-/**
- * @brief Gets temperature in Fahrenheit
- *
- * This function calculates the temperature in Fahrenheit by converting C to F
- *
- * @param t1 Upper temperature byte, t2 Lower temperature byte
- * @return Temperature expressed in Fahrenheit
- */
-float DHT22::getTemperatureF()
-{
-	return 9.0 / 5.0 * getTemperatureC() + 32;
+	return combine_bytes(data_bytes.temp_first_byte, data_bytes.temp_second_byte) / 10.0;
 }
 
 /**
@@ -145,10 +131,9 @@ float DHT22::getTemperatureF()
  *       If h1 = 0000 0010 and h2 = 1000 1100, combine them to get 0000 0010 1000 1100 = 652,
  *       and finally divide by 10 -> 652 / 10 = 65.2%
  */
-float DHT22::getHumidity()
+float DHT22::get_humidity()
 {
-	DHT22_getData();
-	return combineBytes(data.humidity_first_byte, data.humidity_second_byte) / 10.0;
+	return combine_bytes(data_bytes.humidity_first_byte, data_bytes.humidity_second_byte) / 10.0;
 }
 
 /**
@@ -159,22 +144,28 @@ float DHT22::getHumidity()
  * @param data Pointer to DHT22_Data struct where information will be stored in
  * @return none
  */
-void DHT22::DHT22_getData()
+DHT22_data DHT22::DHT22_get_data()
 {
 	DHT22_start();
 	//if sensor is responsive
 	if (status == DHT22_RESPONSE_SUCCESSFUL)
 	{
-	  data.humidity_first_byte = DHT22_read();	//first byte from sensor is first byte of humidity data
-	  data.humidity_second_byte = DHT22_read();	//second byte from sensor is second byte of humidity data
-	  data.temp_first_byte = DHT22_read();	//third byte from sensor is first byte of temperature data
-	  data.temp_second_byte = DHT22_read();	//fourth byte from sensor is second byte of temperature data
-	  data.check_byte = DHT22_read(); //fifth byte from sensor is check sum data
+	  data_bytes.humidity_first_byte = DHT22_read();	//first byte from sensor is first byte of humidity data
+	  data_bytes.humidity_second_byte = DHT22_read();	//second byte from sensor is second byte of humidity data
+	  data_bytes.temp_first_byte = DHT22_read();	//third byte from sensor is first byte of temperature data
+	  data_bytes.temp_second_byte = DHT22_read();	//fourth byte from sensor is second byte of temperature data
+	  data_bytes.check_byte = DHT22_read(); //fifth byte from sensor is check sum data
 	}
 
 	//if sensor is not responding, give error
 	else
 	  Error_Handler();
+
+	DHT22_data data;
+	data.temperature = get_temperature();
+	data.humidity = get_humidity();
+
+	return data;
 }
 
 #ifdef __cplusplus

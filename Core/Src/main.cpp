@@ -42,14 +42,18 @@ int main(void)
 {
 	hardware_init(); //contains hardware initialization for this specific board
 	i2clcd.lcd_init();	//initializes LCD
+	DHT22_data data;
     while (1)
     {
-    	float temperature = dht22.getTemperatureF();
+    	data = dht22.DHT22_get_data();
     	char buffer[16];
-    	snprintf(buffer, 16, "%.2f", temperature);
-		i2clcd.clear_display();
-    	i2clcd.printString(buffer);
+    	snprintf(buffer, 16, "Temp: %.1fC", data.temperature);
+		i2clcd.print_string(buffer);
+    	i2clcd.carriage_return();
+    	snprintf(buffer, 16, "Humidity: %.1f", data.humidity);
+    	i2clcd.print_string(buffer);
     	HAL_Delay(2000);
+    	i2clcd.clear_display();
     }
 }
 

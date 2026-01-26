@@ -18,7 +18,7 @@
 typedef enum {
 	DHT22_RESPONSE_FAIL			= 0,
 	DHT22_RESPONSE_SUCCESSFUL 	= 1
-} DHT22_Status;
+} DHT22_status;
 
 /**
  * @brief Holds data bytes acquired from DHT22.
@@ -29,19 +29,28 @@ typedef struct {
 	uint8_t humidity_first_byte;
 	uint8_t humidity_second_byte;
 	uint8_t check_byte;
-} DHT22_Data;
+} DHT22_data_bytes;
+
+/**
+ * @brief Holds metrics acquired from DHT22.
+ */
+typedef struct {
+	float temperature;
+	float humidity;
+} DHT22_data;
 
 #ifdef __cplusplus
 class DHT22 {
 	private:
-		DHT22_Status status;
-		DHT22_Data data;
+		DHT22_status status;
+		DHT22_data_bytes data_bytes;
+		DHT22_data data;
 		void DHT22_start(void);
-		void DHT22_getData();
+		float get_temperature();
+		float get_humidity();
 	public:
-		float getTemperatureC();
-		float getTemperatureF();
-		float getHumidity();
+		DHT22_data DHT22_get_data();
+
 };
 #endif
 

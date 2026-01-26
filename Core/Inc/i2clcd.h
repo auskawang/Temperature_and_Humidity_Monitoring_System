@@ -28,7 +28,7 @@ class I2CLCD {
 		void lcd_init();
 		void clear_display();
 		void carriage_return();
-		void printString(char str[]);
+		void print_string(char str[]);
 };
 #endif
 

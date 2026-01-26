@@ -154,7 +154,7 @@ void send_data (char data, uint8_t light_mode)
  * @param str[] Char array/string to be printed, light_mode Backlight on or off
  * @return None
  */
-void I2CLCD::printString(char str[])
+void I2CLCD::print_string(char str[])
 {
 	for (int i = 0; i < (uint8_t)strlen(str); i++)
 	{
